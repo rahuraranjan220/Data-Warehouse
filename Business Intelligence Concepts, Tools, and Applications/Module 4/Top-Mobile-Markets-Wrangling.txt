@@ -1,0 +1,42 @@
+[
+  {
+    op corecolumn-removal,
+    description Delete Column [Column 1],
+    columnName Column 1,
+    ignoreError false
+  },
+  {
+    op coretext-transform,
+    description Remove Characters After .d+ [Mobile subscriptions] (#### Rows),
+    engineConfig {
+      mode row-based,
+      facets []
+    },
+    columnName Mobile subscriptions,
+    expression greltrim(partition(value, .d+)[0] + partition(value, .d+)[1]),
+    onError keep-original,
+    repeat false,
+    repeatCount 10
+  },
+  {
+    op coremass-edit,
+    description Edit Cell [% of population of 3g4G users] (#### Rows),
+    engineConfig {
+      mode row-based,
+      facets []
+    },
+    columnName % of population of 3g4G users,
+    expression value,
+    edits [
+      {
+        fromBlank false,
+        fromError false,
+        from [
+          NA
+        ],
+        to ,
+        type text
+      }
+    ]
+  }
+]
